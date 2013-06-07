@@ -25,99 +25,98 @@ A look at a simple model (/classes/Models/Brass/Transaction.php) model. In this 
 * Kohana Validation fields: (required, min_length, max_length, unique, etc)
 
   
-	```php
-	<?php defined('SYSPATH') OR die('No Direct Script Access');
+```php
+<?php defined('SYSPATH') OR die('No Direct Script Access');
 
-	class Model_Brass_Transaction extends Brass
-	{
-	
-	    public $_fields = [
-	        'investor' => [
-	            'editable'  => 'admin',
-	            'type'      => 'objectid',
-	            'label'     => 'Investor',
-	            'input'     => 'select',
-	            'populate'  => 'Model_Annex_Form::investor_list',
-	            'required'  => TRUE,
-	        ],
-	        'client' => [
-	            'type'      => 'objectid',
-	            'label'     => 'Client',
-	            'input'     => 'select',
-	            'populate'  => 'Model_Annex_Form::client_list',
-	        ],
-	        'created' => [
-	            'type'      => 'timestamp',
-	            'required'  => TRUE,
-	        ],
-	        'amount' => [
-	            'editable'  => 'admin',
-	            'type'      => 'double',
-	            'required'  => TRUE
-	        ],
-	        'method' => [
-	            'editable'  => 'admin',
-	            'type'      => 'string',
-	        ],
-	        'type' => [
-	            'editable'  => 'admin',
-	            'type'      => 'string',
-	            'required'  => TRUE
-	        ],
-	        'status' => [
-	            'editable'  => 'admin',
-	            'type'      => 'string',
-	            'required'  => TRUE
-	        ],
-	        'description' => [
-	            'editable'  => 'admin',
-	            'type'      => 'string',
-	            'required'  => TRUE
-	        ],
-	        'signature' => [
-	            'editable'  => 'admin',
-	            'type'      => 'string'
-	        ]
-	    ];
-	}
-	```
+class Model_Brass_Transaction extends Brass
+{
 
+    public $_fields = [
+        'investor' => [
+            'editable'  => 'admin',
+            'type'      => 'objectid',
+            'label'     => 'Investor',
+            'input'     => 'select',
+            'populate'  => 'Model_Annex_Form::investor_list',
+            'required'  => TRUE,
+        ],
+        'client' => [
+            'type'      => 'objectid',
+            'label'     => 'Client',
+            'input'     => 'select',
+            'populate'  => 'Model_Annex_Form::client_list',
+        ],
+        'created' => [
+            'type'      => 'timestamp',
+            'required'  => TRUE,
+        ],
+        'amount' => [
+            'editable'  => 'admin',
+            'type'      => 'double',
+            'required'  => TRUE
+        ],
+        'method' => [
+            'editable'  => 'admin',
+            'type'      => 'string',
+        ],
+        'type' => [
+            'editable'  => 'admin',
+            'type'      => 'string',
+            'required'  => TRUE
+        ],
+        'status' => [
+            'editable'  => 'admin',
+            'type'      => 'string',
+            'required'  => TRUE
+        ],
+        'description' => [
+            'editable'  => 'admin',
+            'type'      => 'string',
+            'required'  => TRUE
+        ],
+        'signature' => [
+            'editable'  => 'admin',
+            'type'      => 'string'
+        ]
+    ];
+}
+```
 
 Creating a record from a brass_transaction 
 
-  ```php
-	$transaction = Brass::factory(
-	    'brass_transaction',
-	    [
-	        'owner'  => '516F8FF5673FAAE898000002'
-	        'name'   => 'Initial Deposit',
-	        'amount' => 1500.00
-	    ]
-	)->create();
-  ```
+```php
+$transaction = Brass::factory(
+    'brass_transaction',
+    [
+        'owner'  => '516F8FF5673FAAE898000002'
+        'name'   => 'Initial Deposit',
+        'amount' => 1500.00
+    ]
+)->create();
+```
 	
 Retrieving brass_transactions from the database
 
-  ```php
-  $transactions = Brass::factory(
-	    'brass_transaction',
-	    [
-	        'owner' => $user->_id
-	    ]
-	))->load(0);
-  ```
+```php
+$transactions = Brass::factory(
+    'brass_transaction',
+    [
+        'owner' => $user->_id
+    ]
+))->load(0);
+```
 	
 Creating data with the native Mongo Driver (versus having a defined model):
 
-  ```php
-  BrassDB::instance()->insert(
-	    'brass_cms',
-	    [
-	        'page' => 'home',
-	        'home' => [
-	        'blog' => [
-	            'header' => 'Latest Blog Post'
-	        ]
-	    ]
-	);
-  ```
+```php
+BrassDB::instance()->insert(
+    'brass_cms',
+    [
+        'page' => 'home',
+        'home' => [
+        'blog' => [
+            'header' => 'Latest Blog Post'
+        ]
+    ]
+);
+```
