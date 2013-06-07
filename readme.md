@@ -2,13 +2,17 @@
 
 ## Brass
 
-Brass is an ORM/ActiveRecord like library that takes full advantage of MongoDB's features. Mango supports:
-* **Atomic updates** - the library will calculate what values changed, and will update only those values using atomic modifiers like $set, $push/$pull and $inc
-* **All Mongo datatypes** including embedded objects, arrays, enums and (multidimensional) counters
-* Relationships you remember from the RDBMS world like has_one, belongs_to, has_many and has_and_belongs_to_many
+Brass is an ORM/ActiveRecord like library that takes full advantage of MongoDB's features. Brass supports:
+* The latest MongoClient driver for PHP
+* Chained calls using Mongo's aggregate framework
+* Atomic updates to calculate what values changed, and updating only those values using atomic modifiers like $set, $push/$pull and $inc
+* Mongo and BSON datatypes including embedded objects, arrays, enums and (multidimensional) counters
+* 
+* Form generation for Models
+* Relationships from the RDBMS world like has_one, belongs_to, has_many and has_and_belongs_to_many
 * Validation of object data, including embedded objects
-* Class Table Extension-like behavior - eg Model_Ferrari extends Model_Car extends Mango.
-* Very easy syntax very familiar to users of other ORMs
+* Simulated "multiple inheritence" for models
+* Similar syntax to users of other ORMs
 
 ## BrassDB
 
