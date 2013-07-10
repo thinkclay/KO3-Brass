@@ -1876,6 +1876,12 @@ abstract class Brass implements Brass_Interface
                     $form[] = Form::checkbox($field_name, $value, $attributes);
                     $form[] = Form::label($field_name, $label);
                 }
+                else if ( $input_type == 'set' )
+                {
+                    $form[] = Form::label($field_name, $label);
+                    $value = implode(', ', $value);
+                    $form[] = Form::$input_type('text', $value, $attributes);
+                }
                 else
                 {
                     $form[] = Form::label($field_name, $label);
