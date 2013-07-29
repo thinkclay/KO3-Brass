@@ -991,7 +991,7 @@ abstract class Brass implements Brass_Interface
      * @return  $this
      * @throws  Brass_Exception     Updating failed
      */
-    public function update($criteria = [], $options)
+    public function update($criteria = [], $options = TRUE)
     {
         if ( $this->_embedded)
             throw new Brass_Exception(
