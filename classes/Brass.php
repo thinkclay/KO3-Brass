@@ -1354,10 +1354,8 @@ abstract class Brass implements Brass_Interface
                 break;
 
                 case 'timestamp':
-                    if ( ! is_int($value) )
-                    {
+                    if ( is_string($value) )
                         $value = ctype_digit($value) ? (int) $value : strtotime($value);
-                    }
                 break;
 
                 case 'boolean':
