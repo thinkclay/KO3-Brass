@@ -1847,12 +1847,12 @@ abstract class Brass implements Brass_Interface
 
                 if ( $input_type == 'select' AND isset($field_data['populate']) )
                 {
-                    $form[] = Form::label($field_name, $label);
+                    $form[] = Form::label($field_name, $label, $attributes);
                     $form[] = Form::select($field_name, call_user_func($field_data['populate']), $value);
                 }
                 else if ( $input_type == 'image' )
                 {
-                    $form[] = Form::label($field_name, $label);
+                    $form[] = Form::label($field_name, $label, $attributes);
                     if ( $value )
                     {
                         $form[] = '<img src="/uploads/'.$value['name'].'" /><br />';
@@ -1861,7 +1861,7 @@ abstract class Brass implements Brass_Interface
                 }
                 else if ( $input_type == 'file' )
                 {
-                    $form[] = Form::label($field_name, $label);
+                    $form[] = Form::label($field_name, $label, $attributes);
                     $form[] = Form::file($field_name);
                 }
                 else if ( $input_type == 'checkbox' )
@@ -1872,17 +1872,17 @@ abstract class Brass implements Brass_Interface
                     }
 
                     $form[] = Form::checkbox($field_name, $value, $attributes);
-                    $form[] = Form::label($field_name, $label);
+                    $form[] = Form::label($field_name, $label, $attributes);
                 }
                 else if ( $input_type == 'set' )
                 {
-                    $form[] = Form::label($field_name, $label);
+                    $form[] = Form::label($field_name, $label, $attributes);
                     $value = implode(', ', $value);
                     $form[] = Form::$input_type('text', $value, $attributes);
                 }
                 else
                 {
-                    $form[] = Form::label($field_name, $label);
+                    $form[] = Form::label($field_name, $label, $attributes);
                     $form[] = Form::$input_type($field_name, $value, $attributes);
                 }
             }
