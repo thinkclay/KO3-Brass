@@ -1196,10 +1196,16 @@ abstract class Brass implements Brass_Interface
                 }
             }
 
+            // This won't work as a truthie check, so let's pass either a straight TRUE otherwise an
+            // array of errors for our form to output to the user
             if ( $array->check() )
                 return $array->check();
             else
-                throw new Brass_Validation_Exception($this->_model, $array);
+                return [
+                    'status' => 'error',
+                    'message' => 'Form failed to submit, you need to see fill out all the required fields',
+                    'errors' => $array->errors()
+                ];
         }
 
         if ( $subject !== Brass::CHECK_LOCAL )
@@ -1844,15 +1850,30 @@ abstract class Brass implements Brass_Interface
                 $value = isset($values[$field_name]) ? $values[$field_name] : '';
 
                 $attributes = isset($field_data['attributes']) ? $field_data['attributes'] : [];
+                $label_attributes = isset($field_data['label_attributes']) ? $field_data['label_attributes'] : [];
+
+                // If the field is required, let's put a class on the form saying so
+                if ( isset($field_data['required']) AND $field_data['required'] == TRUE )
+                {
+                    if ( isset($attributes['class']) )
+                        $attributes['class'] .= ' required';
+                    else
+                        $attributes['class'] = 'required';
+
+                    if ( isset($label_attributes['class']) )
+                        $label_attributes['class'] .= ' required';
+                    else
+                        $label_attributes['class'] = 'required';
+                }
 
                 if ( $input_type == 'select' AND isset($field_data['populate']) )
                 {
-                    $form[] = Form::label($field_name, $label, $attributes);
+                    $form[] = Form::label($field_name, $label, $label_attributes);
                     $form[] = Form::select($field_name, call_user_func($field_data['populate']), $value);
                 }
                 else if ( $input_type == 'image' )
                 {
-                    $form[] = Form::label($field_name, $label, $attributes);
+                    $form[] = Form::label($field_name, $label, $label_attributes);
                     if ( $value )
                     {
                         $form[] = '<img src="/uploads/'.$value['name'].'" /><br />';
@@ -1861,7 +1882,7 @@ abstract class Brass implements Brass_Interface
                 }
                 else if ( $input_type == 'file' )
                 {
-                    $form[] = Form::label($field_name, $label, $attributes);
+                    $form[] = Form::label($field_name, $label, $label_attributes);
                     $form[] = Form::file($field_name);
                 }
                 else if ( $input_type == 'checkbox' )
@@ -1872,17 +1893,17 @@ abstract class Brass implements Brass_Interface
                     }
 
                     $form[] = Form::checkbox($field_name, $value, $attributes);
-                    $form[] = Form::label($field_name, $label, $attributes);
+                    $form[] = Form::label($field_name, $label, $label_attributes);
                 }
                 else if ( $input_type == 'set' )
                 {
-                    $form[] = Form::label($field_name, $label, $attributes);
+                    $form[] = Form::label($field_name, $label, $label_attributes);
                     $value = implode(', ', $value);
                     $form[] = Form::$input_type('text', $value, $attributes);
                 }
                 else
                 {
-                    $form[] = Form::label($field_name, $label, $attributes);
+                    $form[] = Form::label($field_name, $label, $label_attributes);
                     $form[] = Form::$input_type($field_name, $value, $attributes);
                 }
             }
