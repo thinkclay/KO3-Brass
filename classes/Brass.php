@@ -108,8 +108,8 @@ abstract class Brass implements Brass_Interface
 
         if ( ! isset($models[$name]) )
         {
+            $name = implode('_', array_map('ucfirst', explode('_', $name)));
             $class = 'Model_'.$name;
-
             $models[$name] = new $class;
         }
 
