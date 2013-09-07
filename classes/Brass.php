@@ -1831,11 +1831,16 @@ abstract class Brass implements Brass_Interface
      *
      * this will loop through the model and build out a form, checking permissions and other model fields
      * in the process
+     *
+     * @param mixed $populate A mongo ID to use for populating the form fields (it will auto convert from string or id)
      */
-    public function as_form()
+    public function as_form($record_criteria = FALSE)
     {
         $form = [];
         $values = $this->as_array(FALSE);
+
+        if ( $record_criteria )
+            $values = static::factory($this->_model, $record_criteria)->load()->as_array();
 
         // Non logged in users have no business modifying data
         if ( ! $user = Authorize::instance()->get_user() )
