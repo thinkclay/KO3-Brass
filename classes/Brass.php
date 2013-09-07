@@ -59,6 +59,11 @@ abstract class Brass implements Brass_Interface
     protected $_fields = [];
 
     /**
+     * @var  array  fieldset list (name => field data)
+     */
+    protected $_fieldsets = [];
+
+    /**
      * @var  array  relation list (name => relation data)
      */
     protected $_relations = [];
@@ -1836,10 +1841,16 @@ abstract class Brass implements Brass_Interface
         if ( ! $user = Authorize::instance()->get_user() )
             return FALSE;
 
+        foreach ( $this->_fieldsets as $fieldset_name => $fieldset_data )
+        {
+            $form[$fieldset_name] = $fieldset_data;
+        }
+
         foreach ( $this->_fields as $field_name => $field_data )
         {
+            // Fields that start with an underscore are always private and not rendered as a form field
             if ( preg_match('/^_/', $field_name) )
-                break;
+                continue;
 
             $editable = isset($field_data['editable']) ? $field_data['editable'] : FALSE;
 
@@ -1851,6 +1862,10 @@ abstract class Brass implements Brass_Interface
 
                 $attributes = isset($field_data['attributes']) ? $field_data['attributes'] : [];
                 $label_attributes = isset($field_data['label_attributes']) ? $field_data['label_attributes'] : [];
+                $fieldset = isset($field_data['fieldset']) ? $field_data['fieldset'] : 'generic';
+
+                if ( ! isset($form[$fieldset]['fields']) )
+                    $form[$fieldset]['fields'] = '';
 
                 // If the field is required, let's put a class on the form saying so
                 if ( isset($field_data['required']) AND $field_data['required'] == TRUE )
@@ -1868,22 +1883,22 @@ abstract class Brass implements Brass_Interface
 
                 if ( $input_type == 'select' AND isset($field_data['populate']) )
                 {
-                    $form[] = Form::label($field_name, $label, $label_attributes);
-                    $form[] = Form::select($field_name, call_user_func($field_data['populate']), $value);
+                    $form[$fieldset]['fields'] .= Form::label($field_name, $label, $label_attributes);
+                    $form[$fieldset]['fields'] .= Form::select($field_name, call_user_func($field_data['populate']), $value);
                 }
                 else if ( $input_type == 'image' )
                 {
-                    $form[] = Form::label($field_name, $label, $label_attributes);
+                    $form[$fieldset]['fields'] .= Form::label($field_name, $label, $label_attributes);
                     if ( $value )
                     {
-                        $form[] = '<img src="/uploads/'.$value['name'].'" /><br />';
+                        $form[$fieldset]['fields'] .= '<img src="/uploads/'.$value['name'].'" /><br />';
                     }
-                    $form[] = Form::file($field_name);
+                    $form[$fieldset]['fields'] .= Form::file($field_name);
                 }
                 else if ( $input_type == 'file' )
                 {
-                    $form[] = Form::label($field_name, $label, $label_attributes);
-                    $form[] = Form::file($field_name);
+                    $form[$fieldset]['fields'] .= Form::label($field_name, $label, $label_attributes);
+                    $form[$fieldset]['fields'] .= Form::file($field_name);
                 }
                 else if ( $input_type == 'checkbox' )
                 {
@@ -1892,19 +1907,19 @@ abstract class Brass implements Brass_Interface
                         $value = 'false';
                     }
 
-                    $form[] = Form::checkbox($field_name, $value, $attributes);
-                    $form[] = Form::label($field_name, $label, $label_attributes);
+                    $form[$fieldset]['fields'] .= Form::checkbox($field_name, $value, $attributes);
+                    $form[$fieldset]['fields'] .= Form::label($field_name, $label, $label_attributes);
                 }
                 else if ( $input_type == 'set' )
                 {
-                    $form[] = Form::label($field_name, $label, $label_attributes);
+                    $form[$fieldset]['fields'] .= Form::label($field_name, $label, $label_attributes);
                     $value = implode(', ', $value);
-                    $form[] = Form::$input_type('text', $value, $attributes);
+                    $form[$fieldset]['fields'] .= Form::$input_type('text', $value, $attributes);
                 }
                 else
                 {
-                    $form[] = Form::label($field_name, $label, $label_attributes);
-                    $form[] = Form::$input_type($field_name, $value, $attributes);
+                    $form[$fieldset]['fields'] .= Form::label($field_name, $label, $label_attributes);
+                    $form[$fieldset]['fields'] .= Form::$input_type($field_name, $value, $attributes);
                 }
             }
         }
