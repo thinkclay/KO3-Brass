@@ -51,10 +51,10 @@ class Model_Brass_User extends Model_Authenticate_User_Brass implements Acl_Role
             'editable'   => 'user',
             'label'      => 'User Name',
             'type'       => 'string',
-            'required'   => true,
+            'required'   => TRUE,
             'min_length' => 4,
             'max_length' => 32,
-            'unique'     => true,
+            'unique'     => TRUE,
         ],
         'password' => [
             'editable'   => FALSE,
