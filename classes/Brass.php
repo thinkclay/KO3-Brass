@@ -1886,46 +1886,58 @@ abstract class Brass implements Brass_Interface
                         $label_attributes['class'] = 'required';
                 }
 
-                if ( $input_type == 'select' AND isset($field_data['populate']) )
-                {
-                    $form[$fieldset]['fields'] .= Form::label($field_name, $label, $label_attributes);
-                    $form[$fieldset]['fields'] .= Form::select($field_name, call_user_func($field_data['populate']), $value);
-                }
-                else if ( $input_type == 'image' )
-                {
-                    $form[$fieldset]['fields'] .= Form::label($field_name, $label, $label_attributes);
-                    if ( $value )
-                    {
-                        $form[$fieldset]['fields'] .= '<img src="/uploads/'.$value['name'].'" /><br />';
-                    }
-                    $form[$fieldset]['fields'] .= Form::file($field_name);
-                }
-                else if ( $input_type == 'file' )
-                {
-                    $form[$fieldset]['fields'] .= Form::label($field_name, $label, $label_attributes);
-                    $form[$fieldset]['fields'] .= Form::file($field_name);
-                }
-                else if ( $input_type == 'checkbox' )
-                {
-                    if ( ! $value )
-                    {
-                        $value = 'false';
-                    }
+                $form[$fieldset]['fields'] .= '<div class="'.$input_type.' '.$field_name.'">';
 
-                    $form[$fieldset]['fields'] .= Form::checkbox($field_name, $value, $attributes);
-                    $form[$fieldset]['fields'] .= Form::label($field_name, $label, $label_attributes);
-                }
-                else if ( $input_type == 'set' )
+                switch ( $input_type )
                 {
-                    $form[$fieldset]['fields'] .= Form::label($field_name, $label, $label_attributes);
-                    $value = implode(', ', $value);
-                    $form[$fieldset]['fields'] .= Form::$input_type('text', $value, $attributes);
+                    case 'select' :
+                        if ( ! isset($field_data['populate']) )
+                            throw new Kohana_Exception('must set the populate attribute for select fields');
+
+                        $form[$fieldset]['fields'] .= Form::label($field_name, $label, $label_attributes);
+                        $form[$fieldset]['fields'] .= Form::select($field_name, call_user_func($field_data['populate']), $value);
+
+                        break;
+
+                    case 'image' :
+                        $form[$fieldset]['fields'] .= Form::label($field_name, $label, $label_attributes);
+
+                        if ( $value )
+                            $form[$fieldset]['fields'] .= '<img src="/uploads/'.$value['name'].'" /><br />';
+
+                        $form[$fieldset]['fields'] .= Form::file($field_name);
+
+                        break;
+
+
+                    case 'file' :
+                        $form[$fieldset]['fields'] .= Form::label($field_name, $label, $label_attributes);
+                        $form[$fieldset]['fields'] .= Form::file($field_name);
+
+                        break;
+
+                    case 'checkbox' :
+                        if ( ! $value )
+                            $value = 'false';
+
+                        $form[$fieldset]['fields'] .= Form::checkbox($field_name, $value, $attributes);
+                        $form[$fieldset]['fields'] .= Form::label($field_name, $label, $label_attributes);
+
+                        break;
+
+                    case 'set' :
+                        $form[$fieldset]['fields'] .= Form::label($field_name, $label, $label_attributes);
+                        $value = implode(', ', $value);
+                        $form[$fieldset]['fields'] .= Form::$input_type('text', $value, $attributes);
+
+                        break;
+
+                    default :
+                        $form[$fieldset]['fields'] .= Form::label($field_name, $label, $label_attributes);
+                        $form[$fieldset]['fields'] .= Form::$input_type($field_name, $value, $attributes);
                 }
-                else
-                {
-                    $form[$fieldset]['fields'] .= Form::label($field_name, $label, $label_attributes);
-                    $form[$fieldset]['fields'] .= Form::$input_type($field_name, $value, $attributes);
-                }
+
+                $form[$fieldset]['fields'] .= '</div>';
             }
         }
 
