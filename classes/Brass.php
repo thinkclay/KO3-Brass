@@ -228,10 +228,40 @@ abstract class Brass implements Brass_Interface
             return isset($this->_related[$name]);
     }
 
+    /**
+     * Get Function Argument Names
+     *
+     * Uses a backtrace to dynamically retrieve argument names as named parameters (like hashing does in ruby)
+     */
+    public static function get_func_arg_names($funcName = null)
+    {
+        $trace = debug_backtrace();
 
+        // If this was called from Brass, we want to use the caller before it
+        if ( $trace[1]['class'] )
+        {
+            $caller = $trace[2];
+        }
+
+        $f = new ReflectionMethod($caller['class'], $caller['function']);
+        $result = [];
+
+        foreach ( $f->getParameters() as $param )
+        {
+            $result[] = $param->name;
+        }
+
+        return $result;
+    }
+
+    /**
+     * Query Magic
+     *
+     * Performs a query based upon dynamic named parameterns, like a ruby hash would
+     */
     public static function query_magic($vals)
     {
-        $keys = Annex_Helper::get_func_arg_names();
+        $keys = static::get_func_arg_names();
         $query = [];
 
         for ( $i=0; $i<count($keys); $i++ )

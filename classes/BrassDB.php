@@ -52,7 +52,7 @@ class BrassDB
             }
 
             // Store the database instance
-            BrassDB::$instances[$name] = new BrassDB($name,$config);
+            BrassDB::$instances[$name] = new BrassDB($name, $config);
         }
 
         return self::$instances[$name];
@@ -79,7 +79,7 @@ class BrassDB
         $this->_config = $config;
 
         $server  = $this->_config['connection']['hostnames'];
-        $options = Arr::get($this->_config['connection'], 'options', array());
+        $options = Arr::get($this->_config['connection'], 'options', []);
 
         if ( strpos($server, 'mongodb://') !== 0)
         {
@@ -168,10 +168,10 @@ class BrassDB
 
     public function command( array $data)
     {
-        return $this->_call('command', array(), $data);
+        return $this->_call('command', [], $data);
     }
 
-    public function execute( $code, array $args = array() )
+    public function execute( $code, array $args = [] )
     {
         return $this->_call('execute', array(
             'code' => $code,
@@ -205,7 +205,7 @@ class BrassDB
         ));
     }
 
-    public function ensure_index ( $collection_name, $keys, $options = array())
+    public function ensure_index ( $collection_name, $keys, $options = [])
     {
         return $this->_call('ensure_index', array(
             'collection_name' => $collection_name,
@@ -216,7 +216,7 @@ class BrassDB
 
     /** Data Management */
 
-    public function batch_insert ( $collection_name, array $a, array $options = array() )
+    public function batch_insert ( $collection_name, array $a, array $options = [] )
     {
         return $this->_call('batch_insert', array(
             'collection_name' => $collection_name,
@@ -224,7 +224,7 @@ class BrassDB
         ), $a);
     }
 
-    public function count( $collection_name, array $query = array() )
+    public function count( $collection_name, array $query = [] )
     {
         return $this->_call('count', array(
             'collection_name' => $collection_name,
@@ -232,7 +232,7 @@ class BrassDB
         ));
     }
 
-    public function find_one($collection_name, array $query = array(), array $fields = array())
+    public function find_one($collection_name, array $query = [], array $fields = [])
     {
         return $this->_call('find_one', array(
             'collection_name' => $collection_name,
@@ -241,7 +241,7 @@ class BrassDB
         ));
     }
 
-    public function find($collection_name, array $query = array(), array $fields = array())
+    public function find($collection_name, array $query = [], array $fields = [])
     {
         return $this->_call('find', array(
             'collection_name' => $collection_name,
@@ -250,7 +250,7 @@ class BrassDB
         ));
     }
 
-    public function group( $collection_name, $keys , array $initial , $reduce, array $condition= array() )
+    public function group( $collection_name, $keys , array $initial , $reduce, array $condition= [] )
     {
         return $this->_call('group', array(
             'collection_name' => $collection_name,
@@ -261,7 +261,7 @@ class BrassDB
         ));
     }
 
-    public function update($collection_name, array $criteria, array $newObj, $options = array())
+    public function update($collection_name, array $criteria, array $newObj, $options = [])
     {
         return $this->_call('update', array(
             'collection_name' => $collection_name,
@@ -270,7 +270,7 @@ class BrassDB
         ), $newObj);
     }
 
-    public function insert($collection_name, array $a, $options = array())
+    public function insert($collection_name, array $a, $options = [])
     {
         return $this->_call('insert', array(
             'collection_name' => $collection_name,
@@ -278,7 +278,7 @@ class BrassDB
         ), $a);
     }
 
-    public function remove($collection_name, array $criteria, $options = array())
+    public function remove($collection_name, array $criteria, $options = [])
     {
         return $this->_call('remove', array(
             'collection_name' => $collection_name,
@@ -287,7 +287,7 @@ class BrassDB
         ));
     }
 
-    public function save($collection_name, array $a, $options = array())
+    public function save($collection_name, array $a, $options = [])
     {
         return $this->_call('save', array(
             'collection_name' => $collection_name,
@@ -306,14 +306,14 @@ class BrassDB
         return $this->_db->getGridFS($prefix);
     }
 
-    public function get_file(array $criteria = array())
+    public function get_file(array $criteria = [])
     {
         return $this->_call('get_file', array(
             'criteria' => $criteria
         ));
     }
 
-    public function get_files(array $query = array(), array $fields = array())
+    public function get_files(array $query = [], array $fields = [])
     {
         return $this->_call('get_files', array(
             'query'  => $query,
@@ -321,7 +321,7 @@ class BrassDB
         ));
     }
 
-    public function set_file_bytes($bytes, array $extra = array(), array $options = array())
+    public function set_file_bytes($bytes, array $extra = [], array $options = [])
     {
         return $this->_call('set_file_bytes', array(
             'bytes'   => $bytes,
@@ -330,7 +330,7 @@ class BrassDB
         ));
     }
 
-    public function set_file($filename, array $extra = array(), array $options = array())
+    public function set_file($filename, array $extra = [], array $options = [])
     {
         return $this->_call('set_file', array(
             'filename' => $filename,
@@ -339,7 +339,7 @@ class BrassDB
         ));
     }
 
-    public function remove_file( array $criteria = array(), array $options = array())
+    public function remove_file( array $criteria = [], array $options = [])
     {
         return $this->_call('remove_file', array(
             'criteria' => $criteria,
@@ -353,7 +353,7 @@ class BrassDB
      *
      * This allows for easy benchmarking
      */
-    protected function _call($command, array $arguments = array(), array $values = NULL)
+    protected function _call($command, array $arguments = [], array $values = NULL)
     {
         $this->_connected OR $this->connect();
 
