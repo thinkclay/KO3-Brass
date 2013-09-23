@@ -64,7 +64,6 @@ class Model_Brass_User extends Model_Authenticate_User_Brass implements Acl_Role
             'min_length' => 5,
             'max_length' => 50
         ],
-
         'email' => [
             'editable'   => 'user',
             'label'      => 'Email Address',
@@ -103,16 +102,6 @@ class Model_Brass_User extends Model_Authenticate_User_Brass implements Acl_Role
             'type' => 'string',
         ],
 
-        'accredited' => [
-            'type' => 'boolean',
-        ],
-        'account_id' => [
-            'type' => 'string',
-        ],
-        'ssn_last2' => [
-            'type'      => 'string'
-        ],
-
         'first_name' => [
             'editable'   => 'user',
             'label'      => 'First Name',
@@ -140,49 +129,6 @@ class Model_Brass_User extends Model_Authenticate_User_Brass implements Acl_Role
                 ['alpha_dash']
             ]
         ],
-
-
-        'old_investor_id' => [
-            'type'  => 'string',
-        ],
-
-
-
-        // 'alt_phone' => [
-        //     'type' => 'string',
-        //     string '' (length=0)
-        // ],
-        // 'alt_phone_type' => [
-        //     'type' => 'string',
-        //     string '0' (length=1)
-        // ],
-
-
-
-
-        // 'ssn_last2' => [
-        //     'type' => 'string',
-        //     string '' (length=0)
-        // ],
-        // 'state' => [
-        //     'type' => 'string',
-        //     string '' (length=0)
-        // ],
-        // 'updated_at' => [
-        //     'type' => 'string',
-        //     string '2012-11-23 15:39:26' (length=19)
-        // ],
-        // 'user_id' => [
-        //     'type' => 'string',
-        //     string '1' (length=1)
-        // ],
-
-
-        'preferences' => [
-            'editable'   => FALSE,
-            'label'      => 'Preferences',
-            'type'      => 'array'
-        ]
     ];
 
     public function get_role_id()
@@ -190,13 +136,13 @@ class Model_Brass_User extends Model_Authenticate_User_Brass implements Acl_Role
         return $this->role;
     }
 
-    public static function username($val) {
-        $regex = '/^[-a-z0-9_\@\.]++$/iD';
-        return (bool) preg_match($regex, $val);
-    }
-
     public static function unique_username($username)
     {
-        return BrassDB::instance()->find_one('brass_user', ['username', $username]) ? FALSE : TRUE;
+        return is_null(BrassDB::instance()->find_one('brass_users', ['username', $username]));
+    }
+
+    public static function unique_email($email)
+    {
+        return is_null(BrassDB::instance()->find_one('brass_users', ['email', $email]));
     }
 }

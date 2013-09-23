@@ -7,7 +7,6 @@
  * @category    Brass
  * @author      Clay McIlrath
  **/
-
 interface Brass_Interface
 {
 	public function as_array($clean = TRUE);
