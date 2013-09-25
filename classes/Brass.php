@@ -1873,8 +1873,8 @@ abstract class Brass implements Brass_Interface
             $values = static::factory($this->_model, $record_criteria)->load()->as_array();
 
         // Non logged in users have no business modifying data
-        if ( ! $user = Authorize::instance()->get_user() )
-            return FALSE;
+        if ( ! class_exists('Authorize') OR ! $user = Authorize::instance()->get_user() )
+            throw new Brass_Exception('You must be logged in to edit forms');
 
         foreach ( $this->_fieldsets as $fieldset_name => $fieldset_data )
         {
@@ -1883,13 +1883,13 @@ abstract class Brass implements Brass_Interface
 
         foreach ( $this->_fields as $field_name => $field_data )
         {
-            // Fields that start with an underscore are always private and not rendered as a form field
-            if ( preg_match('/^_/', $field_name) )
-                continue;
-
             $editable = isset($field_data['editable']) ? $field_data['editable'] : FALSE;
 
-            if ( $editable == 'user' OR $editable == $user->role OR ($editable AND $user->role == 'admin') )
+            // Fields that start with an underscore are always private and not rendered as a form field
+            if ( preg_match('/^_/', $field_name) OR ! $editable )
+                continue;
+
+            if ( $editable == $user->role OR Authorize::instance()->allowed($editable) )
             {
                 $input_type = isset($field_data['input']) ? $field_data['input'] : 'text';
                 $label = isset($field_data['label']) ? $field_data['label'] : $field_name;

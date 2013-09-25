@@ -8,6 +8,9 @@ You'll see a few additional properties in some of the brass code that relate to 
 
 <br />
 
+**STABILITY**
+This module is being used in production on a few medium and large websites. The code is fairly bug free from what has been tested and unit tests are on the way. I would still reserve caution in using this module on production where there is sensitive unencrypted data, however, as very little penetration testing has been done with this code base.
+
 **FEATURES**
 * The latest MongoClient driver for PHP
 * Chained calls using Mongo's aggregate framework
@@ -26,5 +29,5 @@ You'll see a few additional properties in some of the brass code that relate to 
 
 * [CRUD Operations](https://github.com/thinkclay/KO3-Brass/wiki/CRUD-Operations)
 
-
+=======
 This module is released under an [MIT opensource license](http://opensource.org/licenses/MIT)
