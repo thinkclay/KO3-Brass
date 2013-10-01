@@ -1,4 +1,4 @@
-<?php defined('SYSPATH') or die('No direct script access.');
+<?php (defined('SYSPATH')) OR die('No direct script access.');
 
 /**
  * Brass - An ORM Layer for MongoDB
@@ -11,332 +11,332 @@
 class Brass_Set extends Brass_ArrayObject
 {
 
-	/*
-	 * MongoDB does not support using different modifiers at the same time on a single set,
-	 * therefore we remember the current mode
-	 */
-	protected $_mode;
+    /*
+     * MongoDB does not support using different modifiers at the same time on a single set,
+     * therefore we remember the current mode
+     */
+    protected $_mode;
 
-	/**
-	 * Are duplicates allowed
-	 */
-	protected $_duplicates;
+    /**
+     * Are duplicates allowed
+     */
+    protected $_duplicates;
 
-	/*
-	 * Constructor
-	 *
-	 * @param   array    Current data
-	 * @param   string   Type Hint
-	 * @param   boolean  Are duplicates allowed
-	 * @param   boolean  Is data clean (from DB?)
-	 * @return  void
-	 */
-	public function __construct($array = array(), $type_hint = NULL, $duplicates = TRUE, $clean = FALSE)
-	{
-		$this->_duplicates = $duplicates;
+    /*
+     * Constructor
+     *
+     * @param   array    Current data
+     * @param   string   Type Hint
+     * @param   boolean  Are duplicates allowed
+     * @param   boolean  Is data clean (from DB?)
+     * @return  void
+     */
+    public function __construct($array = array(), $type_hint = NULL, $duplicates = TRUE, $clean = FALSE)
+    {
+        $this->_duplicates = $duplicates;
 
-		if ( ! $clean)
-		{
-			// Make sure we're dealing with an array
-			if ( $array instanceof Brass_ArrayObject)
-			{
-				$array = $array->as_array(FALSE);
-			}
+        if ( ! $clean)
+        {
+            // Make sure we're dealing with an array
+            if ($array instanceof Brass_ArrayObject)
+            {
+                $array = $array->as_array(FALSE);
+            }
 
-			// Make sure we're dealing with non-associative arrays
-			$array = array_values($array);
+            // Make sure we're dealing with non-associative arrays
+            $array = array_values($array);
 
-			if ( ! $this->_duplicates && isset($array))
-			{
-				$unique = array();
+            if ( ! $this->_duplicates AND isset($array))
+            {
+                $unique = array();
 
-				foreach ( $array as $value)
-				{
-					if ( ! in_array($value, $unique, TRUE))
-					{
-						$unique[] = $value;
-					}
-				}
+                foreach ($array as $value)
+                {
+                    if ( ! in_array($value, $unique, TRUE))
+                    {
+                        $unique[] = $value;
+                    }
+                }
 
-				// Only load unique values
-				$array = $unique;
-			}
-		}
+                // Only load unique values
+                $array = $unique;
+            }
+        }
 
-		parent::__construct($array, $type_hint, $clean);
-	}
+        parent::__construct($array, $type_hint, $clean);
+    }
 
-	/*
-	 * Set status to saved
-	 */
-	public function saved()
-	{
-		$this->_mode = NULL;
+    /*
+     * Set status to saved
+     */
+    public function saved()
+    {
+        $this->_mode = NULL;
 
-		parent::saved();
-	}
+        parent::saved();
+    }
 
-	/*
-	 * Return array of changes
-	 *
-	 * @param   boolean   Are we updating or creating
-	 * @param   array     Location of set in parent element
-	 * @return  array     Update data
-	 * @throws  Brass_Exception   within a single set, if already $push/$pull, then no other mods are possible
-	 */
-	public function changed($update, array $prefix = array())
-	{
-		// fetch changed elements in this set
-		$elements = array();
+    /*
+     * Return array of changes
+     *
+     * @param   boolean   Are we updating or creating
+     * @param   array     Location of set in parent element
+     * @return  array     Update data
+     * @throws  Brass_Exception   within a single set, if already $push/$pull, then no other mods are possible
+     */
+    public function changed($update, array $prefix = array())
+    {
+        // fetch changed elements in this set
+        $elements = array();
 
-		switch ( $this->_mode)
-		{
-			case 'push':
-			case 'set':
-			case 'addToSet':
-				foreach ( $this->_changed as $index)
-				{
-					$elements[] = $this->offsetGet($index);
-				}
-			break;
-			case 'pull':
-				// changed values were stored in _changed array
-				$elements = $this->_changed;
-			break;
-		}
+        switch ($this->_mode)
+        {
+            case 'push':
+            case 'set':
+            case 'addToSet':
+                foreach ($this->_changed as $index)
+                {
+                    $elements[] = $this->offsetGet($index);
+                }
+                break;
+            case 'pull':
+                // changed values were stored in _changed array
+                $elements = $this->_changed;
+            break;
+        }
 
-		// normalize changed elements
-		foreach ( $elements as &$element)
-		{
-			if ( $element instanceof Brass_Interface)
-			{
-				$element = $element->as_array();
-			}
-		}
+        // normalize changed elements
+        foreach ($elements as & $element)
+        {
+            if ($element instanceof Brass_Interface)
+            {
+                $element = $element->as_array();
+            }
+        }
 
-		if ( $update === FALSE)
-		{
-			// no more changes possible after this
-			$data = array();
+        if ($update === FALSE)
+        {
+            // no more changes possible after this
+            $data = array();
 
-			if ( count($elements))
-			{
-				Arr::set_path($data, implode('.',$prefix), $elements);
-			}
+            if (count($elements))
+            {
+                Arr::set_path($data, implode('.',$prefix), $elements);
+            }
 
-			return $data;
+            return $data;
 
-			/*return count($elements)
-				? arr::path_set($prefix,$elements)
-				: array();*/
-		}
+            /*return count($elements)
+                ? arr::path_set($prefix,$elements)
+                : array();*/
+        }
 
-		// First, get all changes made to the elements of this set directly
-		$changes_local = array();
+        // First, get all changes made to the elements of this set directly
+        $changes_local = array();
 
-		switch ( $this->_mode)
-		{
-			case 'pop':
-				$changes_local = array('$pop' => array(implode('.',$prefix) => $this->_changed));
-			break;
-			case 'set':
-				foreach ( $this->_changed as $index => $set_index)
-				{
-					$changes_local = Arr::merge($changes_local, array('$set' => array( implode('.',$prefix) . '.' . $set_index => $elements[$index])));
-				}
-			break;
-			case 'unset':
-				foreach ( $this->_changed as $unset_index)
-				{
-					$changes_local = Arr::merge($changes_local, array('$unset' => array( implode('.',$prefix) . '.' . $unset_index => TRUE)));
-				}
-			break;
-			case 'addToSet':
-				$elements = count($this->_changed) > 1
-					? array('$each' => $elements)
-					: $elements[0];
+        switch ($this->_mode)
+        {
+            case 'pop':
+                $changes_local = array('$pop' => array(implode('.',$prefix) => $this->_changed));
+                break;
 
-				$changes_local = array('$addToSet' => array(implode('.',$prefix) => $elements));
-			break;
-			case 'push':
-			case 'pull':
-				$mod = '$' . $this->_mode;
+            case 'set':
+                foreach ($this->_changed as $index => $set_index)
+                {
+                    $changes_local = Arr::merge(
+                        $changes_local, [
+                            '$set' => [
+                                implode('.', $prefix).'.'.$set_index => $elements[$index]
+                            ]
+                        ]
+                    );
+                }
+                break;
 
-				if ( count($this->_changed) > 1)
-				{
-					$mod .= 'All';
-				}
-				else
-				{
-					$elements = $elements[0];
-				}
+            case 'unset':
+                foreach ($this->_changed as $unset_index)
+                {
+                    $changes_local = Arr::merge(
+                        $changes_local, [
+                            '$unset' => [
+                                implode('.', $prefix).'.'.$unset_index => TRUE
+                            ]
+                        ]
+                    );
+                }
+                break;
 
-				$changes_local = array($mod => array(implode('.',$prefix) => $elements));
-			break;
-		}
+            case 'addToSet':
+                $elements = (count($this->_changed) > 1) ? ['$each' => $elements] : $elements[0];
+                $changes_local = array('$addToSet' => array(implode('.',$prefix) => $elements));
+                break;
 
-		// Second, get all changes made within children elements themselves
-		$changes_children = array();
+            case 'push':
 
-		foreach ( $this as $index => $value)
-		{
-			if ( ! is_array($this->_changed) || ! in_array($this->_mode, array('push','set','addToSet')) || ! in_array($index, $this->_changed))
-			{
-				if ( $value instanceof Brass_Interface)
-				{
-					$changes_children = Arr::merge($changes_children, $value->changed($update, array_merge($prefix,array($index))));
-				}
-			}
-		}
+            case 'pull':
+                $mod = '$'.$this->_mode;
 
-		// Some modifiers don't work well together in Mongo - check for mistakes
-		if ( isset($this->_mode) && $this->_mode !== 'set' && $this->_mode !== 'unset' && ! empty($changes_children))
-		{
-			throw new Brass_Exception('MongoDB does not support any other updates when already in :mode mode', array(
-				':mode' => $this->_mode
-			));
-		}
+                if (count($this->_changed) > 1)
+                {
+                    $mod .= 'All';
+                }
+                else
+                {
+                    $elements = $elements[0];
+                }
 
-		// Return all changes
-		return Arr::merge( $changes_local, $changes_children);
-	}
+                $changes_local = array($mod => array(implode('.',$prefix) => $elements));
+                break;
+        }
 
-	/*
-	 * Set value at index $index to $value
-	 *
-	 * @param   integer   index
-	 * @param   mixed     value
-	 * @return  void
-	 * @throws  Brass_Exception   invalid key/action
-	 */
-	public function offsetSet($index,$newval)
-	{
-		// sets don't have associative keys
-		if ( ! is_int($index) && ! is_null($index))
-		{
-			throw new Brass_Exception('Brass_Sets only supports numerical keys');
-		}
+        // Second, get all changes made within children elements themselves
+        $changes_children = array();
 
-		$mode = is_int($index) && $this->offsetExists($index)
-			? 'set'
-			: ($this->_duplicates ? 'push' : 'addToSet');
+        foreach ($this as $index => $value)
+        {
+            if ( ! is_array($this->_changed) OR ! in_array($this->_mode, ['push','set','addToSet']) OR ! in_array($index, $this->_changed))
+            {
+                if ($value instanceof Brass_Interface)
+                {
+                    $changes_children = Arr::merge($changes_children, $value->changed($update, array_merge($prefix,array($index))));
+                }
+            }
+        }
 
-		if ( isset($this->_mode) && $this->_mode !== $mode)
-		{
-			throw new Brass_Exception('MongoDB cannot :action when already in :mode mode', array(
-				':action' => $mode,
-				':mode'   => $this->_mode
-			));
-		}
+        // Some modifiers don't work well together in Mongo - check for mistakes
+        if (isset($this->_mode) AND $this->_mode !== 'set' AND $this->_mode !== 'unset' AND ! empty($changes_children))
+            throw new Brass_Exception('MongoDB does not support any other updates when already in :mode mode', array(
+                ':mode' => $this->_mode
+            ));
 
-		if ( ! $this->_duplicates && $this->find($this->load_type($newval)) !== FALSE)
-		{
-			// value has been added already
-			return TRUE;
-		}
+        // Return all changes
+        return Arr::merge( $changes_local, $changes_children);
+    }
 
-		// Set value
-		$index = parent::offsetSet($index,$newval);
+    /*
+     * Set value at index $index to $value
+     *
+     * @param   integer   index
+     * @param   mixed     value
+     * @return  void
+     * @throws  Brass_Exception   invalid key/action
+     */
+    public function offsetSet($index,$newval)
+    {
+        // sets don't have associative keys
+        if ( ! is_int($index) AND ! is_null($index))
+            throw new Brass_Exception('Brass_Sets only supports numerical keys');
 
-		if ( is_int($index))
-		{
-			// value was added successfully, set mode & index of changed value
-			$this->_mode = $mode;
-			$this->_changed[] = $index;
-		}
+        $mode = (is_int($index) AND $this->offsetExists($index))
+            ? 'set'
+            : ($this->_duplicates ? 'push' : 'addToSet');
 
-		return TRUE;
-	}
+        if (isset($this->_mode) AND $this->_mode !== $mode)
+            throw new Brass_Exception('MongoDB cannot :action when already in :mode mode', [
+                ':action' => $mode,
+                ':mode'   => $this->_mode
+            ]);
 
-	/*
-	 * Unset value at index $index
-	 *
-	 * @param   integer   index
-	 * @return  void
-	 * @throws  Brass_Exception   invalid key/action
-	 */
-	public function offsetUnset($index)
-	{
-		if ( ! ctype_digit((string)$index) && ! is_null($index))
-		{
-			throw new Brass_Exception('Brass_Sets only supports numerical keys');
-		}
+        // value has been added already
+        if ( ! $this->_duplicates AND $this->find($this->load_type($newval)) !== FALSE)
+            return TRUE;
 
-		if ( ! $this->offsetExists($index))
-		{
-			return;
-		}
+        // Set value
+        $index = parent::offsetSet($index,$newval);
 
-		$mode = $this->_duplicates ? 'unset' : 'pull';
+        if (is_int($index))
+        {
+            // value was added successfully, set mode & index of changed value
+            $this->_mode = $mode;
+            $this->_changed[] = $index;
+        }
 
-		if ( isset($this->_mode) && $this->_mode !== $mode)
-		{
-			throw new Brass_Exception('MongoDB cannot :new_mode when already in :mode mode', array(
-				':new_mode' => $mode,
-				':mode'     => $this->_mode
-			));
-		}
+        return TRUE;
+    }
 
-		// set mode & pulled value
-		$this->_mode = $mode;
-		$this->_changed[] = $this->_duplicates
-			? $index
-			: $this->offsetGet($index);
+    /*
+     * Unset value at index $index
+     *
+     * @param   integer   index
+     * @return  void
+     * @throws  Brass_Exception   invalid key/action
+     */
+    public function offsetUnset($index)
+    {
+        if ( ! ctype_digit( (string) $index) AND ! is_null($index))
+        {
+            throw new Brass_Exception('Brass_Sets only supports numerical keys');
+        }
 
-		parent::offsetUnset($index);
-	}
+        if ( ! $this->offsetExists($index))
+        {
+            return;
+        }
 
-	/*
-	 * Pop last value from array and return value
-	 */
-	public function pop()
-	{
-		return $this->_pop(true);
-	}
+        $mode = $this->_duplicates ? 'unset' : 'pull';
 
-	/*
-	 * Shift first value from array and return value
-	 */
-	public function shift()
-	{
-		return $this->_pop(false);
-	}
+        if (isset($this->_mode) AND $this->_mode !== $mode)
+            throw new Brass_Exception('MongoDB cannot :new_mode when already in :mode mode', array(
+                ':new_mode' => $mode,
+                ':mode'     => $this->_mode
+            ));
 
-	protected function _pop($pop)
-	{
-		if ( isset($this->_mode))
-		{
-			throw new Brass_Exception('MongoDB cannot pop when already in :mode mode', array(
-				':mode'     => $this->_mode
-			));
-		}
+        // set mode & pulled value
+        $this->_mode = $mode;
+        $this->_changed[] = $this->_duplicates
+            ? $index
+            : $this->offsetGet($index);
 
-		if ( count($this) === 0)
-		{
-			// nothing to pop/shift
-			return NULL;
-		}
+        parent::offsetUnset($index);
+    }
 
-		$this->_mode = 'pop';
-		$this->_changed = $pop ? 1 : -1;
+    /*
+     * Pop last value from array and return value
+     */
+    public function pop()
+    {
+        return $this->_pop(TRUE);
+    }
 
-		$offset = $pop ? count($this) - 1 : 0;
-		$value  = $this->offsetGet($offset);
+    /*
+     * Shift first value from array and return value
+     */
+    public function shift()
+    {
+        return $this->_pop(FALSE);
+    }
 
-		parent::offsetUnset($offset);
+    protected function _pop($pop)
+    {
+        if (isset($this->_mode))
+            throw new Brass_Exception('MongoDB cannot pop when already in :mode mode', array(
+                ':mode'     => $this->_mode
+            ));
 
-		return $value;
-	}
+        // nothing to pop/shift
+        if (count($this) === 0)
+            return NULL;
 
-	/*
-	 * Returns object as array
-	 *
-	 * @param   boolean  fetch value directly from object
-	 * @return  array    array representation of array object
-	 */
-	public function as_array( $clean = TRUE )
-	{
-		// ensures a sequential array is returned
-		return array_values(parent::as_array($clean));
-	}
+        $this->_mode = 'pop';
+        $this->_changed = $pop ? 1 : -1;
+
+        $offset = $pop ? count($this) - 1 : 0;
+        $value  = $this->offsetGet($offset);
+
+        parent::offsetUnset($offset);
+
+        return $value;
+    }
+
+    /*
+     * Returns object as array
+     *
+     * @param   boolean  fetch value directly from object
+     * @return  array    array representation of array object
+     */
+    public function as_array( $clean = TRUE )
+    {
+        // ensures a sequential array is returned
+        return array_values(parent::as_array($clean));
+    }
 }
