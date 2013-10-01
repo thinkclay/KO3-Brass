@@ -2,17 +2,16 @@
 
 class Brass_Validation extends Kohana_Validation
 {
+    protected $_empty_rules = array('not_empty', 'matches', 'required');
 
-	protected $_empty_rules = array('not_empty', 'matches', 'required');
+    public function offsetUnset($offset)
+    {
+        unset($this->_labels[$offset], $this->_rules[$offset], $this->_data[$offset]);
+    }
 
-	public function offsetUnset($offset)
-	{
-		unset($this->_labels[$offset], $this->_rules[$offset], $this->_data[$offset]);
-	}
-
-	public function offsetSet($offset, $value)
-	{
-		$this->_data[$offset] = $value;
-	}
+    public function offsetSet($offset, $value)
+    {
+        $this->_data[$offset] = $value;
+    }
 
 }

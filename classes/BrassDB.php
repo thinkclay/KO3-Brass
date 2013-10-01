@@ -1,4 +1,4 @@
-<?php defined('SYSPATH') or die('No direct script access.');
+<?php (defined('SYSPATH')) OR die('No direct script access.');
 
 /**
  * Brass - An ORM / ActiveRecord for MongoDB
@@ -31,24 +31,24 @@ class BrassDB
      *     // Create a custom configured instance
      *     $db = BrassDB::instance('custom', $config);
      *
-     * @param   string   instance name
-     * @param   array    configuration parameters
+     * @param   string   $name      instance name
+     * @param   array    $config    configuration parameters
      * @return  Database
      */
     public static function instance($name = NULL, array $config = NULL)
     {
-        if ( $name === NULL )
+        if ($name === NULL)
         {
             // Use the default instance name
             $name = BrassDB::$default;
         }
 
-        if ( ! isset(BrassDB::$instances[$name]) )
+        if ( ! isset(BrassDB::$instances[$name]))
         {
             if ($config === NULL)
             {
                 // Load the configuration for this database
-                $config = Kohana::$config->load('brassDB.' . $name);
+                $config = Kohana::$config->load('brassDB.'.$name);
             }
 
             // Store the database instance
@@ -81,17 +81,17 @@ class BrassDB
         $server  = $this->_config['connection']['hostnames'];
         $options = Arr::get($this->_config['connection'], 'options', []);
 
-        if ( strpos($server, 'mongodb://') !== 0)
+        if (strpos($server, 'mongodb://') !== 0)
         {
             // Add 'mongodb://'
-            $server = 'mongodb://' . $server;
+            $server = 'mongodb://'.$server;
         }
 
         // create Mongo object (but don't connect just yet)
         $this->_connection = new MongoClient($server, ['connect' => FALSE] + $options);
 
         // connect
-        if ( Arr::get($options, 'connect', TRUE))
+        if (Arr::get($options, 'connect', TRUE))
         {
             $this->connect();
         }
@@ -107,10 +107,8 @@ class BrassDB
      */
     public function connect()
     {
-        if ( $this->_connected)
-        {
+        if ($this->_connected)
             return TRUE;
-        }
 
         $this->_connection->connect();
 
@@ -135,7 +133,7 @@ class BrassDB
      */
     public function disconnect()
     {
-        if ( $this->_connected)
+        if ($this->_connected)
         {
             $this->_connection->close();
         }
@@ -252,52 +250,52 @@ class BrassDB
 
     public function group( $collection_name, $keys , array $initial , $reduce, array $condition= [] )
     {
-        return $this->_call('group', array(
+        return $this->_call('group', [
             'collection_name' => $collection_name,
             'keys'            => $keys,
             'initial'         => $initial,
             'reduce'          => $reduce,
             'condition'       => $condition
-        ));
+        ]);
     }
 
-    public function update($collection_name, array $criteria, array $newObj, $options = [])
+    public function update($collection_name, array $criteria, array $new_obj, $options = [])
     {
-        return $this->_call('update', array(
+        return $this->_call('update', [
             'collection_name' => $collection_name,
             'criteria'        => $criteria,
             'options'         => $options
-        ), $newObj);
+        ], $new_obj);
     }
 
     public function insert($collection_name, array $a, $options = [])
     {
-        return $this->_call('insert', array(
+        return $this->_call('insert', [
             'collection_name' => $collection_name,
             'options'         => $options
-        ), $a);
+        ], $a);
     }
 
     public function remove($collection_name, array $criteria, $options = [])
     {
-        return $this->_call('remove', array(
+        return $this->_call('remove', [
             'collection_name' => $collection_name,
             'criteria'        => $criteria,
             'options'         => $options
-        ));
+        ]);
     }
 
     public function save($collection_name, array $a, $options = [])
     {
-        return $this->_call('save', array(
+        return $this->_call('save', [
             'collection_name' => $collection_name,
             'options'         => $options
-        ), $a);
+        ], $a);
     }
 
     /** File management */
 
-    public function gridFS()
+    public function grid_fs()
     {
         $this->_connected OR $this->connect();
 
@@ -359,86 +357,115 @@ class BrassDB
 
         extract($arguments);
 
-        if ( ! empty($this->_config['profiling']) )
+        if ( ! empty($this->_config['profiling']))
         {
             $_bm_name = isset($collection_name)
-             ? $collection_name . '.' . $command
+             ? $collection_name.'.'.$command
              : $command;
 
-            if ( isset($query))    $_bm_name .= ' (' . JSON_encode($query) . ')';
-            if ( isset($criteria)) $_bm_name .= ' (' . JSON_encode($criteria) . ')';
-            if ( isset($values))   $_bm_name .= ' (' . JSON_encode($values) . ')';
+            if (isset($query))
+            {
+                $_bm_name .= ' ('.JSON_encode($query).')';
+            }
+
+            if (isset($criteria))
+            {
+                $_bm_name .= ' ('.JSON_encode($criteria).')';
+            }
+
+            if (isset($values))
+            {
+                $_bm_name .= ' ('.JSON_encode($values).')';
+            }
 
             $_bm = Profiler::start("BrassDB {$this->_name}",$_bm_name);
         }
 
-        if ( isset($collection_name) )
+        if (isset($collection_name))
         {
             $c = $this->_db->selectCollection($collection_name);
         }
 
-        switch ( $command )
+        switch ($command)
         {
-            case 'ensure_index':
+            case 'ensure_index' :
                 $r = $c->ensureIndex($keys, $options);
-            break;
+                break;
+
             case 'create_collection':
                 $r = $this->_db->createCollection($name,$capped,$size,$max);
-            break;
+                break;
+
             case 'drop_collection':
                 $r = $this->_db->dropCollection($name);
-            break;
+                break;
+
             case 'command':
                 $r = $this->_db->command($values);
-            break;
+                break;
+
             case 'execute':
                 $r = $this->_db->execute($code,$args);
-            break;
+                break;
+
             case 'batch_insert':
                 $r = $c->batchInsert($values, $options);
-            break;
+                break;
+
             case 'count':
                 $r = $c->count($query);
-            break;
+                break;
+
             case 'find_one':
                 $r = $c->findOne($query,$fields);
-            break;
+                break;
+
             case 'find':
                 $r = $c->find($query,$fields);
-            break;
+                break;
+
             case 'group':
                 $r = $c->group($keys,$initial,$reduce,$condition);
-            break;
+                break;
+
             case 'update':
                 $r = $c->update($criteria, $values, $options);
-            break;
+                break;
+
             case 'insert':
                 $r = $c->insert($values, $options);
-            break;
+                break;
+
             case 'remove':
                 $r = $c->remove($criteria,$options);
-            break;
+                break;
+
             case 'save':
                 $r = $c->save($values, $options);
-            break;
+                break;
+
             case 'get_file':
                 $r = $this->gridFS()->findOne($criteria);
-            break;
+                break;
+
             case 'get_files':
                 $r = $this->gridFS()->find($query, $fields);
-            break;
+                break;
+
             case 'set_file_bytes':
                 $r = $this->gridFS()->storeBytes($bytes, $extra, $options);
-            break;
+                break;
+
             case 'set_file':
                 $r = $this->gridFS()->storeFile($filename, $extra, $options);
-            break;
+                break;
+
             case 'remove_file':
                 $r = $this->gridFS()->remove($criteria, $options);
-            break;
+                break;
         }
 
-        if ( isset($_bm))
+        if (isset($_bm))
         {
             Profiler::stop($_bm);
         }

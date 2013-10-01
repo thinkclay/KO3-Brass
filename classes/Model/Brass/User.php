@@ -1,4 +1,4 @@
-<?php defined('SYSPATH') or die('No direct script access.');
+<?php defined('SYSPATH') OR die('No direct script access.');
 
 /**
  * Brass user model
@@ -25,7 +25,7 @@ class Model_Brass_User extends Model_Authenticate_User_Brass implements Acl_Role
         'created' => [
             'editable'  => FALSE,
             'type'      => 'string',
-            'required'  => true,
+            'required'  => TRUE,
         ],
         'updated' => [
             'editable'  => FALSE,
