@@ -25,7 +25,11 @@ class Brass_ArrayObject extends ArrayObject implements Brass_Interface
      * Constructor
      *
      * @param   array   $array          Current data
+<<<<<<< HEAD
      * @param   string  $type_hint      Type Hint
+=======
+     * @param   string  $type_hint  Type Hint
+>>>>>>> 2dae3f2af5b28e53540e589c74bbcecb15c7d97f
      * @param   boolean $clean          Is data clean (from DB?)
      * @return  void
      */
