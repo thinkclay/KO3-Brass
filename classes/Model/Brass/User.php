@@ -1,7 +1,7 @@
 <?php defined('SYSPATH') OR die('No direct script access.');
 
 /**
- * Brass user model
+ * Brass User Model
  */
 class Model_Brass_User extends Model_Authenticate_User_Brass implements Acl_Role_Interface
 {

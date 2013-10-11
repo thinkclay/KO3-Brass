@@ -2,7 +2,7 @@
 
 class Brass_Validation extends Kohana_Validation
 {
-    protected $_empty_rules = array('not_empty', 'matches', 'required');
+    protected $_empty_rules = ['not_empty', 'matches', 'required'];
 
     public function offsetUnset($offset)
     {

@@ -10,11 +10,10 @@
 
 class Brass_ArrayObject extends ArrayObject implements Brass_Interface
 {
-
     /**
      * Remembers changes made to this array object (for updating)
      */
-    protected $_changed = array();
+    protected $_changed = [];
 
     /**
      * Stores the type of value stored in this array object
@@ -25,11 +24,7 @@ class Brass_ArrayObject extends ArrayObject implements Brass_Interface
      * Constructor
      *
      * @param   array   $array          Current data
-<<<<<<< HEAD
      * @param   string  $type_hint      Type Hint
-=======
-     * @param   string  $type_hint  Type Hint
->>>>>>> 2dae3f2af5b28e53540e589c74bbcecb15c7d97f
      * @param   boolean $clean          Is data clean (from DB?)
      * @return  void
      */
