@@ -1,4 +1,4 @@
-<?php defined('SYSPATH') or die('No direct script access.');
+<?php defined('SYSPATH') OR die('No direct script access.');
 
 return [
 
@@ -26,7 +26,7 @@ return [
 			/** connection options (see http://www.php.net/manual/en/mongo.construct.php) **/
 			'options'   => [
 				// database to connect to
-				'db'         => 'example',
+				'db'         => 'test',
 
 				// default timeout of 20 seconds is too long
 				'connectTimeoutMS'    => 2000,
@@ -37,11 +37,11 @@ return [
 				'connect'    => FALSE,
 
 				// authentication
-				//'username'  => 'username',
-				//'password'  => 'password',
+				// 'username'  => 'username',
+				// 'password'  => 'password',
 
 				// replication
-				//'replicaSet' => 'someSet',
+				// 'replicaSet' => 'someSet',
 			]
 		],
 
