@@ -1,4 +1,6 @@
 # BrassDB for Kohana 3.3
+[![Build Status](https://drone.io/github.com/thinkclay/KO3-Brass/status.png)](https://drone.io/github.com/thinkclay/KO3-Brass/latest)
+
 Brass is an ORM/ActiveRecord like library that takes full advantage of MongoDB's features. Brass aims to be a really simple wrapper to access MongoDB. Store your database info in a config file and access MongoDB from anywhere in your code using BrassDB::instance() or using defined models with ORM.
 
 You'll see a few additional properties in some of the brass code that relate to [annex](https://github.com/thinkclay/KO3-Annex) which is a CMS module for Kohana. If you're building a CMS, I highly recommend checking out Annex as it will auto build and validate forms for you. If you're looking for JUST the ORM, then ignore the editable, label, and input properties. The properties that are used in Brass:
