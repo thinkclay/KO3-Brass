@@ -1920,6 +1920,11 @@ abstract class Brass implements Brass_Interface
 
                 switch ( $input_type )
                 {
+                    case 'label' : 
+                        $form[$fieldset]['fields'] .= Form::label($field_name, $label, $label_attributes);
+                        
+                        break;
+
                     case 'select' :
                         if ( ! isset($field_data['populate']) )
                             throw new Kohana_Exception('must set the populate attribute for select fields');
