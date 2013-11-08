@@ -1897,6 +1897,7 @@ abstract class Brass implements Brass_Interface
 
                 $attributes = isset($field_data['attributes']) ? $field_data['attributes'] : [];
                 $label_attributes = isset($field_data['label_attributes']) ? $field_data['label_attributes'] : [];
+                $field_class = isset($field_data['class']) ? $field_data['class'] : '';
                 $fieldset = isset($field_data['fieldset']) ? $field_data['fieldset'] : 'generic';
 
                 if ( ! isset($form[$fieldset]['fields']) )
@@ -1916,7 +1917,7 @@ abstract class Brass implements Brass_Interface
                         $label_attributes['class'] = 'required';
                 }
 
-                $form[$fieldset]['fields'] .= '<div class="'.$input_type.' '.$field_name.'">';
+                $form[$fieldset]['fields'] .= '<div class="'.$input_type.' '.$field_name.' '.$field_class.'">';
 
                 switch ( $input_type )
                 {
