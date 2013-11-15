@@ -791,10 +791,10 @@ abstract class Brass implements Brass_Interface
     {
         $changed = [];
 
-        foreach ( $this->_fields as $name => $field)
+        foreach ($this->_fields as $name => $field)
         {
             // local variables are not stored in DB
-            if ( isset($field['local']) AND $field['local'] === TRUE )
+            if (isset($field['local']) AND $field['local'] === TRUE)
                 continue;
 
             $value = isset($this->_object[$name]) ? $this->_object[$name] : Arr::get($this->_clean, $name);
@@ -807,10 +807,10 @@ abstract class Brass implements Brass_Interface
             // prepare prefix
             $path = array_merge($prefix, [$name]);
 
-            if ( isset($this->_changed[$name]))
+            if (isset($this->_changed[$name]))
             {
                 // value has been changed
-                if ( $value instanceof Brass_Interface)
+                if ($value instanceof Brass_Interface)
                 {
                     $value = $value->as_array();
                 }
