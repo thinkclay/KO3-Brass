@@ -351,7 +351,7 @@ class BrassDB
      *
      * This allows for easy benchmarking
      */
-    protected function _call($command, array $arguments = [], array $values = NULL)
+    protected function  _call($command, array $arguments = [], array $values = NULL)
     {
         $this->_connected OR $this->connect();
 

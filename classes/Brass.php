@@ -1131,6 +1131,12 @@ abstract class Brass implements Brass_Interface
 
         try
         {
+            // Instead of deleting a document completely
+            if ($this->loaded())
+            {
+                $this->db()->insert($this->_collection.'_archive', $this->as_array());
+            }
+
             $this->db()->remove($this->_collection, array('_id'=> $this->_id), $options);
         }
         catch (MongoCursorException $e)
