@@ -18,4 +18,24 @@ class Brass_Test extends Unittest_TestCase
         $this->assertTrue(is_object(BrassDB::instance()));
     }
 
+    public function test_crud_operations()
+    {
+        $doc = Brass::factory('Brass_Foo', [
+            'string_data' => 'ABC'
+        ]);
+
+        // Make sure we can create
+        $this->assertTrue(is_object($doc->create()));
+
+        // And retrieve our data
+        $this->assertTrue(is_string($doc->string_data));
+
+        // That we can load the former document
+        $doc2 = Brass::factory('Brass_Foo', ['_id' => $doc->_id])->load();
+        $this->assertTrue($doc2->loaded());
+
+        // And delete it
+        $this->assertTrue(is_object($doc2->delete()));
+    }
+
 }
