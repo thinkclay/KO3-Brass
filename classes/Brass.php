@@ -1937,7 +1937,7 @@ abstract class Brass implements Brass_Interface
                             throw new Kohana_Exception('must set the populate attribute for select fields');
 
                         $form[$fieldset]['fields'] .= Form::label($field_name, $label, $label_attributes);
-                        $form[$fieldset]['fields'] .= Form::select($field_name, call_user_func($field_data['populate']), $value);
+                        $form[$fieldset]['fields'] .= Form::select($field_name, call_user_func($field_data['populate']), $value, $attributes);
 
                         break;
 
@@ -1947,14 +1947,14 @@ abstract class Brass implements Brass_Interface
                         if ( $value )
                             $form[$fieldset]['fields'] .= '<img src="/uploads/'.$value['name'].'" /><br />';
 
-                        $form[$fieldset]['fields'] .= Form::file($field_name);
+                        $form[$fieldset]['fields'] .= Form::file($field_name, $attributes);
 
                         break;
 
 
                     case 'file' :
                         $form[$fieldset]['fields'] .= Form::label($field_name, $label, $label_attributes);
-                        $form[$fieldset]['fields'] .= Form::file($field_name);
+                        $form[$fieldset]['fields'] .= Form::file($field_name, $attributes);
 
                         break;
 
