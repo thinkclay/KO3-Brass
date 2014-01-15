@@ -287,7 +287,7 @@ abstract class Brass implements Brass_Interface
         else if ( is_object($obj) AND get_class($obj) == 'MongoId'  )
             return $obj;
 
-        else if ( is_object($obj) AND preg_match('/Model_Brass/i', get_class($obj)) )
+        else if ( is_object($obj) AND preg_match('/Model_/i', get_class($obj)) )
             return $obj->_id;
 
         else
@@ -1927,9 +1927,9 @@ abstract class Brass implements Brass_Interface
 
                 switch ( $input_type )
                 {
-                    case 'label' : 
+                    case 'label' :
                         $form[$fieldset]['fields'] .= Form::label($field_name, $label, $label_attributes);
-                        
+
                         break;
 
                     case 'select' :
