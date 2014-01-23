@@ -995,6 +995,16 @@ abstract class Brass implements Brass_Interface
 
         if ( $values = $this->changed(FALSE) )
         {
+            if ( isset($this->_fields['updated_at']) AND ! isset($value['created_at']) )
+            {
+                $values['created_at'] = new MongoDate(time());
+            }
+
+            if ( isset($this->_fields['updated_at']) AND ! isset($values['updated_at']) )
+            {
+                $values['updated_at'] = new MongoDate(time());
+            }
+
             $options = is_array($safe)
                 ? $safe
                 : array('safe' => $safe);
@@ -1043,6 +1053,11 @@ abstract class Brass implements Brass_Interface
         if ( $values = $this->changed($safe) )
         {
             $criteria['_id'] = $this->_id;
+
+            if ( isset($this->_fields['updated_at']) AND ! isset($values['updated_at']) )
+            {
+                $values['updated_at'] = new MongoDate(time());
+            }
 
             try
             {
