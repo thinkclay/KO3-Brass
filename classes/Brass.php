@@ -987,7 +987,8 @@ abstract class Brass implements Brass_Interface
             throw new Brass_Exception(':name model is embedded and cannot be created in the database',
                 array(':name' => $this->_model));
 
-        if ( ! isset($this->_id))
+
+        if ( ! isset($this->_id) OR ! $this->_id )
         {
             // Generate MongoId
             $this->_id = new MongoId;
